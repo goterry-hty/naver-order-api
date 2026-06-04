@@ -13,7 +13,8 @@ def get_signature():
     
     timestamp = str(int(time.time() * 1000) - 3000)
     password = (client_id + '_' + timestamp).encode('utf-8')
-    hashed = bcrypt.hashpw(password, client_secret.encode('utf-8'))
+salt = client_secret.encode('utf-8')
+hashed = bcrypt.hashpw(password, salt)
     signature = base64.b64encode(hashed).decode('utf-8')
     
     return jsonify({
