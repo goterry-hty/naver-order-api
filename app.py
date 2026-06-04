@@ -29,6 +29,10 @@ def get_token():
         }
     )
     return jsonify(response.json())
-
+@app.route('/ip')
+def get_ip():
+    import urllib.request
+    ip = urllib.request.urlopen('https://api.ipify.org').read().decode()
+    return jsonify({'ip': ip})
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
