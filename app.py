@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 import bcrypt
 import time
 import base64
+import traceback
 
 app = Flask(__name__)
 
@@ -14,8 +15,7 @@ def get_signature():
         
         timestamp = str(int(time.time() * 1000) - 3000)
         password = (client_id + '_' + timestamp).encode('utf-8')
-        salt = client_secret.encode('utf-8')
-        hashed = bcrypt.hashpw(password, salt)
+        hashed = bcrypt.hashpw(password, client_secret.encode('utf-8'))
         signature = base64.b64encode(hashed).decode('utf-8')
         
         return jsonify({
@@ -23,7 +23,10 @@ def get_signature():
             'signature': signature
         })
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({
+            'error': str(e),
+            'trace': traceback.format_exc()
+        }), 500
 
 @app.route('/ip')
 def get_ip():
