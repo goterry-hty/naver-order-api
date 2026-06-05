@@ -15,7 +15,16 @@ def get_signature():
         
         timestamp = str(int(time.time() * 1000) - 3000)
         password = (client_id + '_' + timestamp).encode('utf-8')
-        hashed = bcrypt.hashpw(password, client_secret.encode('utf-8'))
+        
+        # salt를 bytes로 변환
+        salt = client_secret.encode('utf-8')
+        
+        # salt 유효성 로그
+        import sys
+        print(f"salt length: {len(salt)}", file=sys.stderr)
+        print(f"salt value: {salt}", file=sys.stderr)
+        
+        hashed = bcrypt.hashpw(password, salt)
         signature = base64.b64encode(hashed).decode('utf-8')
         
         return jsonify({
